@@ -1,0 +1,59 @@
+{% extends "shares/home_base.html" %}
+{% block content %}
+{% if request.user.is_authenticated %}
+<div class="col-8">
+    <div class="container post-create-container">
+        <div class="row">
+            <div class="col-8 post-create-btn">
+                <span class="small-grey-text">{{ request.user.last_name }}, something news today?</span>
+            </div>
+            <div class="vertical-slim-grey-line"></div>
+            <div class="post-create-icon-container">
+                <i class="fas fa-photo-video photo-icon" style="line-height: 220%"></i>
+                <span class="small-grey-bold-text">Photo</span>
+            </div>
+            <div class="post-create-icon-container">
+                <i class="far fa-grin emotion-icon" style="line-height: 220%"></i>
+                <span class="small-grey-bold-text">Emotion</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% for post in result.posts %}
+    <div class="container post-container" onclick="goToDetail({{ post.id }})">
+        <div class="row post-info">
+            {% for topic in post.topic %}
+            <span class="badge badge-primary topic-badge"
+                  style="background-color: {{ topic.background_color_code }}; color: {{ topic.font_color_code }}">
+        {{ topic.name }}
+        </span> {% endfor %}
+            <div class="small-grey-text">Posted by {{ post.author.first_name }} {{ post.author.last_name }}</div>
+            <div class="small-grey-text">{{ post.time_display }}</div>
+        </div>
+        <div class="row post-title-container">
+            <div class="medium-black-bold-text">{{ post.title }}</div>
+        </div>
+        <div class="row post-body-container">
+            <div class="post-body">{{ post.body }}</div>
+        </div>
+        <div class="row">
+            <div class="comment-container">
+                <i class="far fa-comment-alt comment-icon"></i>
+                <span class="small-grey-bold-text">{{ post.numOfComments }} Comments</span>
+            </div>
+            <div class="eye-container">
+                <i class="far fa-eye eye-icon"></i>
+                <span class="small-grey-bold-text">{{ post.numOfViews }} Views</span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script type="text/javascript">
+    function goToDetail(id){
+        window.location.href = 'post/' +id;
+    }
+
+</script>
+
+{% endblock %}

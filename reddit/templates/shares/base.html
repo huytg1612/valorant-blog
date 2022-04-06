@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+{% if result.email %}
+<p>Xin chào, {{ result.email }}</p>
+{% else %}
+<a href="{% url 'login' %}">Login</a>
+{% endif %}
+{% block content %}
+{% endblock %}
+</body>
+</html>

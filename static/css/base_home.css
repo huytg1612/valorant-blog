@@ -1,0 +1,49 @@
+body{
+    background-color: #dae0e6;
+}
+header{
+    background-color: white;
+    width: 100%;
+    height: 50px;
+    margin-bottom: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.valorant-icon{
+    width: 32px;
+    height: 32px;
+    margin-right: 7px;
+    margin-top: auto;
+    margin-bottom: auto;
+    vertical-align: baseline;
+    display: inline-block;
+}
+.valorant-text{
+    width: 128.4px;
+    height: 20px;
+}
+.top-user-banner{
+    background-image: url('https://styles.redditmedia.com/t5_3gdh7/styles/bannerBackgroundImage_gjdubmbqvws01.png');
+    background-position: center;
+    color: white;
+    font-weight: 500;
+    height: 75px;
+    display: flex;
+    padding-left: 15px;
+    padding-bottom: 5px;
+}
+.top-user-banner span{
+    align-self: flex-end;
+}
+.user-container{
+    padding: 5px;
+    border-bottom: 1px solid #e2e0e0;
+}
+.top-user-container{
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 13px;
+    border: 1px solid #babfc5;
+    border-radius: 5px;
+}

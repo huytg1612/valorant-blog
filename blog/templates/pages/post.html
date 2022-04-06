@@ -1,0 +1,174 @@
+{% extends "shares/home_base.html" %}
+{% block content %}
+<style>
+body{
+    background-color: #f6f6f6;
+}
+.post-container{
+    margin-bottom: 0;
+    border: 0;
+    border-radius: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.post-container:hover{
+    border: 0;
+    cursor: default;
+}
+
+
+
+
+
+</style>
+{% with post=result.post %}
+<div class="col-8">
+    <div class="container post-container">
+        <div class="row post-info">
+            {% for topic in post.topic %}
+            <span class="badge badge-primary topic-badge"
+                  style="background-color: {{ topic.background_color_code }}; color: {{ topic.font_color_code }}">
+        {{ topic.name }}
+        </span> {% endfor %}
+            <div class="small-grey-text">Posted by {{ post.author.first_name }} {{ post.author.last_name }}</div>
+            <div class="small-grey-text">{{ post.time_display }}</div>
+        </div>
+        <div class="row post-title-container">
+            <div class="medium-black-bold-text">{{ post.title }}</div>
+        </div>
+        <div class="row post-body-container">
+            <div class="post-body">{{ post.body }}</div>
+        </div>
+        <div class="row">
+            <div class="comment-container">
+                <i class="far fa-comment-alt comment-icon"></i>
+                <span class="small-grey-bold-text">{{ post.numOfComments }} Comments</span>
+            </div>
+            <div class="eye-container">
+                <i class="far fa-eye eye-icon"></i>
+                <span class="small-grey-bold-text">{{ post.numOfViews }} Views</span>
+            </div>
+        </div>
+    </div>
+    <div class="container comment-form-container">
+        <form action="{% url 'blog:post' post.id %}" method="post">
+            {% csrf_token %}
+            {{ result.comment_form.media }}
+            <!--            {{ result.comment_form }}-->
+            <label><span
+                    class="small-black-text">Comment as {{ request.user.first_name }} {{ request.user.last_name }}</span>
+            </label><br>
+            <div style="padding-right: 15px; padding-left: 15px">
+                <textarea class="ckeditor" name="comment" style="width: 650px, height: 190px"></textarea>
+            </div>
+            <input class="btn btn-outline-dark btn-sm" type="submit" value="comment" name="comment_button"
+                   style="margin-top: 15px; margin-bottom: 10px">
+        </form>
+    </div>
+    <div class="container list-comment-container">
+        {% for comment in post.list_comment %}
+        <div id="{{ comment.id }}" class="comment">
+            <div class="row">
+                <div class="comment-avatar">
+                    <img src="{{ comment.viewer.user.avatar }}">
+                </div>
+                <div>
+                    <span class="small-black-text" style="margin-right: 5px; margin-left: 5px">{{ comment.viewer.user.first_name }} {{ comment.viewer.user.last_name }}</span>
+                    <span class="small-grey-text">{{ comment.time_display }}</span>
+                </div>
+            </div>
+            <div class="row comment-content-container">
+                <span>{{ comment.content }}</span>
+            </div>
+            <div class="row reply-button" onclick="replyComment({{ comment.id }})">
+                <span class="small-grey-text">Reply</span>
+            </div>
+        </div>
+        <div hidden id="reply_{{ comment.id }}" class="reply-form-container">
+            <form action="{% url 'blog:post' post.id %}" method="post">
+                {% csrf_token %}
+                {{ result.comment_form.media }}
+                <label><span
+                        class="small-black-text">Comment as {{ request.user.first_name }} {{ request.user.last_name }}</span>
+                </label><br>
+                <div style="padding-right: 15px; padding-left: 15px">
+                    <textarea class="ckeditor" name="comment" style="width: 650px, height: 190px"></textarea>
+                </div>
+                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                <input class="btn btn-outline-dark btn-sm" type="submit" value="reply" name="reply_button"
+                       style="margin-top: 15px; margin-bottom: 10px">
+                <input class="btn btn-outline-danger btn-sm" type="button" value="cancel" name="cancel_button"
+                       style="margin-top: 15px; margin-bottom: 10px" onclick="cancelReply({{ comment.id }})">
+            </form>
+        </div>
+        {% for reply in comment.replies %}
+        <div id="{{ reply.id }}" class="reply">
+            <div class="row">
+                <div class="comment-avatar">
+                    <img src="{{ comment.viewer.user.avatar }}">
+                </div>
+                <div>
+                    <span class="small-black-text" style="margin-right: 5px; margin-left: 5px">{{ reply.viewer.user.first_name }} {{ reply.viewer.user.last_name }}</span>
+                    <span class="small-grey-text">{{ reply.time_display }}</span>
+                </div>
+            </div>
+            <div class="row comment-content-container">
+                <span>
+                    {% if reply.reply_to != None %}
+                    <span class="super-small-black-bold-text">{{ reply.reply_to.user.first_name }} {{ reply.reply_to.user.last_name }}</span>
+                    {% endif %}
+                    {{ reply.content }}
+                </span>
+            </div>
+            <div class="row reply-button" onclick="replyComment({{ reply.id }})">
+                <span class="small-grey-text">Reply</span>
+            </div>
+        </div>
+        <div hidden id="reply_{{ reply.id }}" class="reply-form-container">
+            <form action="{% url 'blog:post' post.id %}" method="post">
+                {% csrf_token %}
+                {{ result.comment_form.media }}
+                <label><span
+                        class="small-black-text">Comment as {{ request.user.first_name }} {{ request.user.last_name }}</span>
+                </label><br>
+                <div style="padding-right: 15px; padding-left: 15px">
+                    <textarea class="ckeditor" id="comment" name="comment"
+                              style="width: 650px, height: 190px"></textarea>
+                </div>
+                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                <input class="btn btn-outline-dark btn-sm" type="submit" value="reply" name="reply_button"
+                       style="margin-top: 15px; margin-bottom: 10px">
+                <input class="btn btn-outline-danger btn-sm" type="button" value="cancel" name="cancel_button"
+                       style="margin-top: 15px; margin-bottom: 10px" onclick="cancelReply({{ reply.id }})">
+            </form>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+{% endwith %}
+<script type="text/javascript">
+    reply_div_block = document.createElement('div');
+
+    function replyComment(id){
+        reply_div = document.getElementById("reply_"+id);
+        if(reply_div.hidden){
+            reply_div_block.hidden = true
+            reply_div.removeAttribute("hidden")
+            reply_div_block = reply_div
+        }else{
+            reply_div.hidden = true
+        }
+
+    }
+
+    function cancelReply(id){
+        reply_div = document.getElementById("reply_"+id);
+        reply_div.hidden = true
+    }
+
+
+
+
+</script>
+{% endblock %}
